@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panier — Cupim</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+  <style>
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 0;
+      min-height: calc(100vh - 72px - 56px);
+    }
+    .cart-items { padding: 48px; border-right: 1px solid var(--border); }
+    .cart-summary { padding: 48px 40px; background: var(--off); position: sticky; top: 72px; height: fit-content; }
+    .cart-item {
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      gap: 24px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .cart-item-img {
+      aspect-ratio: 3/4;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: #ccc; font-size: 28px;
+      overflow: hidden;
+    }
+    .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+    .cart-item-name {
+      font-family: var(--serif);
+      font-size: 18px; font-weight: 500;
+      margin-bottom: 4px; cursor: pointer;
+    }
+    .cart-item-name:hover { color: var(--red); }
+    .cart-item-size {
+      font-size: 11px; color: var(--gray);
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .cart-qty {
+      display: flex; align-items: center;
+      border: 1px solid var(--border); width: fit-content;
+    }
+    .cart-qty-btn {
+      background: none; border: none;
+      width: 32px; height: 32px;
+      font-size: 16px; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cart-qty-btn:hover { background: var(--border); }
+    .cart-qty-val {
+      width: 40px; text-align: center; font-size: 13px;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      line-height: 32px;
+    }
+    .cart-item-price { font-size: 16px; font-weight: 400; white-space: nowrap; }
+    .cart-item-remove {
+      display: block; margin-top: 8px;
+      background: none; border: none; padding: 0;
+      font-size: 11px; color: var(--gray);
+      letter-spacing: 1px; cursor: pointer;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .cart-item-remove:hover { color: var(--red); }
+    .summary-title {
+      font-family: var(--serif);
+      font-size: 24px; font-weight: 500;
+      margin-bottom: 32px;
+    }
+    .summary-row {
+      display: flex; justify-content: space-between;
+      font-size: 13px; margin-bottom: 12px;
+      color: var(--gray);
+    }
+    .summary-row.total {
+      font-size: 18px; color: var(--black);
+      font-weight: 400; margin-top: 20px;
+      padding-top: 20px; border-top: 1px solid var(--border);
+    }
+    .summary-row.total span:last-child { font-family: var(--serif); font-size: 22px; }
+    .empty-cart {
+      text-align: center; padding: 120px 48px;
+      grid-column: 1 / -1;
+    }
+    .empty-cart i { font-size: 64px; color: var(--border); display: block; margin-bottom: 24px; }
+    .empty-cart h2 { font-family: var(--serif); font-size: 32px; margin-bottom: 12px; }
+    .empty-cart p { color: var(--gray); margin-bottom: 32px; }
+    @media(max-width:900px) {
+      .cart-layout { grid-template-columns: 1fr; }
+      .cart-items { padding: 24px 20px; }
+      .cart-summary { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Cupim<span>.</span></a>
+  <a href="shop.html" class="nav-link">Shop</a>
+  <a href="shop.html" class="nav-link">Collections</a>
+  <a href="#" class="nav-link">À propos</a>
+  <div class="nav-icons">
+    <button class="nav-icon-btn" onclick="location.href='cart.html'" aria-label="Cart">
+      <i class="ti ti-shopping-bag" aria-hidden="true"></i>
+      <span class="cart-count" id="cart-count" style="display:none">0</span>
+    </button>
+    
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="index.html">Accueil</a>
+  <span class="breadcrumb-sep">›</span>
+  <span>Mon Panier</span>
+</div>
+
+<div class="cart-layout" id="cart-layout"></div>
+
+<div class="toast" id="global-toast"></div>
+<script src="js/app.js"></script>
+<script>
+ 
+
+  function renderCart() {
+    const items = Cart.get();
+    const layout = document.getElementById('cart-layout');
+
+    if (!items.length) {
+      layout.innerHTML = `
+        <div class="empty-cart">
+          <i class="ti ti-shopping-bag-x"></i>
+          <h2>Votre panier est vide</h2>
+          <p>Découvrez nos accessoires de luxe · Explore our luxury accessories</p>
+          <a href="shop.html" class="btn-primary">Voir la boutique</a>
+        </div>`;
+      return;
+    }
+
+    const total = Cart.total();
+
+    layout.innerHTML = `
+      <div class="cart-items">
+        <h1 style="font-family:var(--serif);font-size:32px;font-weight:500;margin-bottom:32px">
+          Mon Panier <span style="font-size:16px;color:var(--gray);font-family:var(--sans);font-weight:300">(${items.length} article${items.length !== 1 ? 's' : ''})</span>
+        </h1>
+        ${items.map(item => `
+          <div class="cart-item" id="item-${item.key}">
+            <div class="cart-item-img" onclick="location.href='product.html?id=${item.product.id}'" style="cursor:pointer">
+              ${item.product.images && item.product.images.length
+                ? `<img src="${item.product.images[0]}" alt="${item.product.title}"/>`
+                : `<i class="ti ti-diamond"></i>`}
+            </div>
+            <div>
+              <div class="cart-item-name" onclick="location.href='product.html?id=${item.product.id}'">${item.product.title}</div>
+              <div class="cart-item-size">Taille: ${item.size}</div>
+              <div class="cart-qty">
+                <button class="cart-qty-btn" onclick="changeQty('${item.key}', -1)">−</button>
+                <span class="cart-qty-val" id="qty-${item.key}">${item.quantity}</span>
+                <button class="cart-qty-btn" onclick="changeQty('${item.key}', 1)">+</button>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="cart-item-price">${formatPrice(item.product.price * item.quantity)}</div>
+              <div style="font-size:12px;color:var(--gray);margin-bottom:8px">${formatPrice(item.product.price)} / pièce</div>
+              <button class="cart-item-remove" onclick="removeItem('${item.key}')">
+                <i class="ti ti-trash" style="margin-right:4px"></i>Supprimer
+              </button>
+            </div>
+          </div>
+        `).join('')}
+        <div style="margin-top:24px">
+          <a href="shop.html" style="font-size:12px;color:var(--gray);letter-spacing:1px;text-transform:uppercase">
+            ← Continuer les achats
+          </a>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="summary-title">Récapitulatif</div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>${formatPrice(total)}</span>
+        </div>
+        <button class="btn-primary" style="width:100%;margin-top:24px;text-align:center" onclick="goToCheckout()">
+          Commander — ${formatPrice(total)}
+        </button>
+        <div style="margin-top:16px;text-align:center;font-size:11px;color:var(--gray);letter-spacing:1px">
+          <i class="ti ti-shield-check" style="margin-right:6px"></i>Paiement à la livraison
+        </div>
+      </div>`;
+  }
+
+  function changeQty(key, delta) {
+    const items = Cart.get();
+    const item = items.find(i => i.key === key);
+    if (!item) return;
+    item.quantity = Math.max(1, item.quantity + delta);
+    Cart.save(items);
+    renderCart();
+  }
+
+  function removeItem(key) {
+    Cart.remove(key);
+    renderCart();
+    showToast('Article supprimé');
+  }
+
+  function goToCheckout() {
+    if (!Cart.get().length) return;
+    location.href = 'checkout.html';
+  }
+
+  renderCart();
+</script>
+</body>
+</html>

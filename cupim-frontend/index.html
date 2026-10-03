@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cupim — Luxury Accessories</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+  <style>
+    /* Hero */
+    .hero {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      background: #1a1a1a;
+      aspect-ratio: 880 / 970;
+      max-height: 100vh;
+    }
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* Categories strip */
+    .cats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .cat-item {
+      padding: 40px 32px;
+      border-right: 1px solid var(--border);
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cat-item:last-child { border-right: none; }
+    .cat-item:hover { background: var(--off); }
+    .cat-icon { font-size: 28px; margin-bottom: 12px; color: var(--gray); display: block; }
+    .cat-name {
+      font-family: var(--serif);
+      font-size: 18px; font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .cat-sub { font-size: 11px; color: var(--gray); letter-spacing: 1px; text-transform: uppercase; }
+
+    /* Featured strip */
+    .featured-strip {
+      background: var(--red);
+      padding: 20px 48px;
+      display: flex; align-items: center; gap: 48px;
+      overflow: hidden;
+    }
+    .featured-strip-label {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      white-space: nowrap;
+    }
+    .featured-strip-items {
+      display: flex; gap: 48px; flex: 1;
+    }
+    .featured-strip-item {
+      font-family: var(--serif);
+      font-size: 20px; color: var(--white);
+      white-space: nowrap; letter-spacing: 1px;
+    }
+
+    /* New arrivals */
+    .arrivals-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+    .view-all {
+      font-size: 11px; letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray); border-bottom: 1px solid var(--border);
+      padding-bottom: 2px; transition: color 0.2s;
+    }
+    .view-all:hover { color: var(--black); }
+
+    /* Promise section */
+    .promise-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 64px;
+    }
+    .promise-item {
+      background: var(--white);
+      padding: 48px 40px;
+      text-align: center;
+    }
+    .promise-icon { font-size: 32px; color: var(--red); margin-bottom: 20px; display: block; }
+    .promise-title {
+      font-family: var(--serif);
+      font-size: 20px; font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .promise-text { font-size: 13px; color: var(--gray); line-height: 1.8; }
+
+    /* Loading skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--off) 25%, var(--border) 50%, var(--off) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 2px;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    @media(max-width:900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { min-height: 300px; }
+      .hero-title { font-size: 48px; }
+      .cats-strip { grid-template-columns: repeat(2, 1fr); }
+      .promise-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Cupim<span>.</span></a>
+  <a href="shop.html" class="nav-link">Shop</a>
+  <a href="shop.html" class="nav-link">Collections</a>
+  <a href="#" class="nav-link">À propos</a>
+  <div class="nav-icons">
+    <button class="nav-icon-btn" onclick="location.href='cart.html'" aria-label="Cart">
+      <i class="ti ti-shopping-bag" aria-hidden="true"></i>
+      <span class="cart-count" id="cart-count" style="display:none">0</span>
+    </button>
+    
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="hero.mp4" type="video/mp4">
+  </video>
+</section>
+
+
+
+<!-- Featured strip -->
+<div class="featured-strip">
+  <span class="featured-strip-label">En vedette</span>
+  <div class="featured-strip-items">
+    <span class="featured-strip-item">Collection Automne</span>
+    <span class="featured-strip-item">·</span>
+    <span class="featured-strip-item">Édition Limitée</span>
+    <span class="featured-strip-item">·</span>
+    <span class="featured-strip-item">Livraison Algérie</span>
+    <span class="featured-strip-item">·</span>
+    <span class="featured-strip-item">Pièces Exclusives</span>
+  </div>
+</div>
+
+<!-- New Arrivals -->
+<section class="section">
+  <div class="arrivals-header">
+    <div>
+      <p class="section-sub">Dernières arrivées</p>
+      <h2 class="section-title">New Arrivals</h2>
+    </div>
+    <a href="shop.html" class="view-all">Voir tout →</a>
+  </div>
+  <div class="product-grid" id="products-grid">
+    <!-- loaded via JS -->
+    <div style="grid-column:1/-1;text-align:center;padding:80px 0;color:var(--gray)">
+      <i class="ti ti-loader" style="font-size:32px;display:block;margin-bottom:16px" aria-hidden="true"></i>
+      Chargement des produits…
+    </div>
+  </div>
+
+  <!-- Promise -->
+  <div class="promise-grid">
+    <div class="promise-item">
+      <i class="ti ti-truck promise-icon" aria-hidden="true"></i>
+      <div class="promise-title">Livraison Rapide</div>
+      <p class="promise-text">Livraison dans toute l'Algérie sous 48–72h. Fast delivery across Algeria.</p>
+    </div>
+    <div class="promise-item">
+      <i class="ti ti-shield-check promise-icon" aria-hidden="true"></i>
+      <div class="promise-title">Qualité Garantie</div>
+      <p class="promise-text">Chaque pièce est vérifiée avant expédition. Every piece inspected before dispatch.</p>
+    </div>
+    <div class="promise-item">
+      <i class="ti ti-headset promise-icon" aria-hidden="true"></i>
+      <div class="promise-title">Support Client</div>
+      <p class="promise-text">Notre équipe est disponible 7j/7. Our team available every day.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Cupim<span>.</span></div>
+      <p class="footer-desc">Accessories de luxe crafted for the modern Algerian — where elegance meets identity.</p>
+    </div>
+    <div>
+      <div class="footer-title">Boutique</div>
+      <ul class="footer-links">
+        <li><a href="shop.html">Tous les produits</a></li>
+        <li><a href="shop.html">Nouveautés</a></li>
+        <li><a href="shop.html">Collections</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-title">Informations</div>
+      <ul class="footer-links">
+        <li><a href="#">À propos</a></li>
+        <li><a href="#">Livraison</a></li>
+        <li><a href="#">Retours</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-title">Contact</div>
+      <ul class="footer-links">
+        <li><a href="#">WhatsApp</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Cupim. Tous droits réservés.</span>
+    <span>Made in Algeria 🇩🇿</span>
+  </div>
+</footer>
+
+<div class="toast" id="global-toast"></div>
+
+<script src="js/app.js"></script>
+<script>
+  // Account button
+  
+
+  // Load products
+  async function loadProducts() {
+    try {
+      const products = await request('GET', '/products?limit=4');
+      const grid = document.getElementById('products-grid');
+      if (!products.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:80px 0;color:var(--gray)">
+          <i class="ti ti-package-off" style="font-size:32px;display:block;margin-bottom:16px"></i>
+          Aucun produit disponible — No products yet.<br/>
+          <a href="admin.html" style="color:var(--red);font-size:13px;margin-top:12px;display:inline-block">Add products in admin →</a>
+        </div>`;
+        return;
+      }
+      grid.innerHTML = products.map(p => `
+        <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
+          <div class="product-card-img">
+            ${p.images && p.images.length ? `<img src="${p.images[0]}" alt="${p.title}"/>` : productPlaceholder()}
+            <span class="product-badge">New</span>
+          </div>
+          <div class="product-card-cat">${p.category_name || 'Accessoire'}</div>
+          <div class="product-card-name">${p.title}</div>
+          <div class="product-card-price">${formatPrice(p.price)}</div>
+        </div>
+      `).join('');
+    } catch(e) {
+      document.getElementById('products-grid').innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:80px 0;color:var(--gray)">
+          Impossible de charger les produits. Assurez-vous que le serveur est démarré.
+        </div>`;
+    }
+  }
+
+  loadProducts();
+</script>
+</body>
+</html>

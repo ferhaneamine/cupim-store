@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion — Cupim</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+  <style>
+    body { background: var(--off); }
+    .login-wrap {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 20px;
+    }
+    .login-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 56px 48px;
+      width: 100%; max-width: 420px;
+    }
+    .login-logo {
+      font-family: var(--serif);
+      font-size: 32px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      text-align: center; margin-bottom: 8px;
+    }
+    .login-logo span { color: var(--red); }
+    .login-sub {
+      text-align: center; font-size: 12px;
+      color: var(--gray); letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 40px;
+    }
+    .login-title {
+      font-family: var(--serif);
+      font-size: 24px; font-weight: 500;
+      margin-bottom: 24px;
+    }
+    .eye-btn {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      color: var(--gray); cursor: pointer; font-size: 16px;
+      padding: 0;
+    }
+    .input-wrap { position: relative; }
+    .error-msg {
+      background: var(--red-light); color: var(--red);
+      padding: 12px 16px; font-size: 13px;
+      margin-bottom: 20px; display: none;
+    }
+    .divider-or {
+      display: flex; align-items: center; gap: 16px;
+      margin: 24px 0; color: var(--gray); font-size: 12px;
+    }
+    .divider-or::before, .divider-or::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .back-shop {
+      display: block; text-align: center; margin-top: 24px;
+      font-size: 12px; color: var(--gray);
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .back-shop:hover { color: var(--black); }
+  </style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">Cupim<span>.</span></div>
+    <div class="login-sub">Espace Administrateur</div>
+
+    <h1 class="login-title">Connexion</h1>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="email" type="email" placeholder="admin@cupim.com" autocomplete="email"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <div class="input-wrap">
+        <input class="form-input" id="password" type="password" placeholder="••••••••" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter') login()"/>
+        <button class="eye-btn" onclick="togglePwd()" aria-label="Afficher mot de passe">
+          <i class="ti ti-eye" id="eye-icon" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-primary" style="width:100%;text-align:center;margin-top:8px" id="login-btn" onclick="login()">
+      Se connecter
+    </button>
+
+    <div class="divider-or">ou</div>
+
+    <a href="index.html" class="back-shop">
+      <i class="ti ti-arrow-left" style="margin-right:6px"></i>
+      Retour à la boutique
+    </a>
+  </div>
+</div>
+
+<div class="toast" id="global-toast"></div>
+<script src="js/app.js"></script>
+<script>
+  // Redirect if already logged in
+  if (Auth.isLoggedIn()) {
+    location.href = Auth.isAdmin() ? 'admin.html' : 'index.html';
+  }
+
+  function togglePwd() {
+    const pwd = document.getElementById('password');
+    const icon = document.getElementById('eye-icon');
+    if (pwd.type === 'password') {
+      pwd.type = 'text';
+      icon.className = 'ti ti-eye-off';
+    } else {
+      pwd.type = 'password';
+      icon.className = 'ti ti-eye';
+    }
+  }
+
+  async function login() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const errEl = document.getElementById('error-msg');
+    const btn = document.getElementById('login-btn');
+
+    errEl.style.display = 'none';
+    if (!email || !password) {
+      errEl.textContent = 'Veuillez remplir tous les champs.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.textContent = 'Connexion…';
+    btn.disabled = true;
+
+    try {
+      const data = await request('POST', '/auth/login', { email, password });
+      Auth.save(data);
+      showToast('Bienvenue ' + data.name + ' !');
+      setTimeout(() => {
+        location.href = data.role === 'admin' ? 'admin.html' : 'index.html';
+      }, 800);
+    } catch(e) {
+      errEl.textContent = 'Email ou mot de passe incorrect.';
+      errEl.style.display = 'block';
+      btn.textContent = 'Se connecter';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

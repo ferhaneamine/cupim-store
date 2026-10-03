@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Produit — Cupim</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+  <style>
+    .product-detail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 72px - 56px);
+    }
+
+    /* Gallery */
+    .product-gallery {
+      display: flex;
+      flex-direction: column;
+      background: var(--off);
+      position: sticky; top: 72px;
+      height: calc(100vh - 72px);
+    }
+    .main-image {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+      background: var(--off);
+    }
+    .main-image img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  transition: opacity 0.3s;
+}
+    .main-image-placeholder {
+      font-size: 100px; color: #ddd;
+    }
+    .main-image-nav {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      display: flex; justify-content: space-between;
+      width: 100%; padding: 0 16px;
+      pointer-events: none;
+    }
+    .nav-arrow {
+      pointer-events: all;
+      background: rgba(255,255,255,0.9);
+      border: none; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .nav-arrow:hover { background: var(--white); }
+    .nav-arrow:disabled { opacity: 0.3; cursor: default; }
+    .image-counter {
+      position: absolute; bottom: 16px; right: 16px;
+      background: rgba(0,0,0,0.5); color: #fff;
+      font-size: 11px; letter-spacing: 1px;
+      padding: 4px 10px;
+    }
+    .thumbnails {
+      display: flex; gap: 8px;
+      padding: 12px 16px;
+      overflow-x: auto;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+    }
+    .thumbnails::-webkit-scrollbar { height: 4px; }
+    .thumbnails::-webkit-scrollbar-thumb { background: var(--border); }
+    .thumb {
+  width: 64px; height: 80px; flex-shrink: 0;
+  object-fit: contain;
+      border: 2px solid transparent;
+      cursor: pointer; transition: border-color 0.2s;
+      opacity: 0.6;
+    }
+    .thumb.active { border-color: var(--black); opacity: 1; }
+    .thumb:hover { opacity: 1; }
+    .thumb-placeholder {
+      width: 64px; height: 80px; flex-shrink: 0;
+      background: var(--off);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: #ddd;
+      border: 2px solid var(--border);
+    }
+
+    /* Info */
+    .product-info {
+      padding: 56px 56px;
+      overflow-y: auto;
+    }
+    .product-cat { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 16px; }
+    .product-name { font-family: var(--serif); font-size: 44px; font-weight: 500; line-height: 1.1; margin-bottom: 12px; }
+    .product-price { font-size: 26px; font-weight: 300; margin-bottom: 24px; }
+    .product-desc { font-size: 14px; color: var(--gray); line-height: 1.9; margin-bottom: 32px; border-top: 1px solid var(--border); padding-top: 24px; }
+    .size-label { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-bottom: 12px; }
+    .sizes { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .size-btn { border: 1px solid var(--border); background: var(--white); padding: 8px 18px; font-size: 12px; font-family: var(--sans); cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
+    .size-btn:hover { border-color: var(--black); }
+    .size-btn.selected { background: var(--black); color: var(--white); border-color: var(--black); }
+    .qty-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .qty-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); }
+    .qty-ctrl { display: flex; align-items: center; border: 1px solid var(--border); }
+    .qty-btn { background: none; border: none; width: 36px; height: 36px; font-size: 18px; cursor: pointer; color: var(--black); transition: background 0.2s; }
+    .qty-btn:hover { background: var(--off); }
+    .qty-val { width: 48px; text-align: center; font-size: 14px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); line-height: 36px; }
+    .add-cart-btn { width: 100%; background: var(--black); color: var(--white); border: 1px solid var(--black); padding: 18px; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.25s; margin-bottom: 12px; }
+    .add-cart-btn:hover { background: var(--red); border-color: var(--red); }
+    .checkout-now { width: 100%; background: transparent; color: var(--black); border: 1px solid var(--border); padding: 18px; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.25s; }
+    .checkout-now:hover { border-color: var(--black); }
+    .product-meta { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+    .meta-row { display: flex; gap: 16px; font-size: 13px; }
+    .meta-key { color: var(--gray); min-width: 80px; }
+    .stock-badge { display: inline-block; padding: 3px 10px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .in-stock { background: #e8f5e9; color: #2e7d32; }
+    .out-stock { background: var(--red-light); color: var(--red); }
+
+    @media(max-width:900px) {
+      .product-detail { grid-template-columns: 1fr; }
+      .product-gallery { position: static; height: auto; }
+      .main-image { min-height: 400px; }
+      .product-info { padding: 32px 20px; }
+      .product-name { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Cupim<span>.</span></a>
+  <a href="shop.html" class="nav-link">Shop</a>
+  <a href="shop.html" class="nav-link">Collections</a>
+  <a href="#" class="nav-link">À propos</a>
+  <div class="nav-icons">
+    <button class="nav-icon-btn" onclick="location.href='cart.html'" aria-label="Cart">
+      <i class="ti ti-shopping-bag" aria-hidden="true"></i>
+      <span class="cart-count" id="cart-count" style="display:none">0</span>
+    </button>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="index.html">Accueil</a>
+  <span class="breadcrumb-sep">›</span>
+  <a href="shop.html">Shop</a>
+  <span class="breadcrumb-sep">›</span>
+  <span id="bc-name">Produit</span>
+</div>
+
+<div class="product-detail" id="product-detail">
+  <div style="display:flex;align-items:center;justify-content:center;min-height:600px;background:var(--off);color:var(--gray)">
+    <i class="ti ti-loader" style="font-size:32px"></i>
+  </div>
+  <div style="padding:64px 56px;display:flex;align-items:center;justify-content:center;color:var(--gray)">
+    Chargement du produit…
+  </div>
+</div>
+
+<div class="toast" id="global-toast"></div>
+<script src="js/app.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const productId = params.get('id');
+  let product = null;
+  let selectedSize = null;
+  let qty = 1;
+  let currentImageIndex = 0;
+
+  if (!productId) location.href = 'shop.html';
+
+  async function loadProduct() {
+    try {
+      product = await request('GET', `/products/${productId}`);
+      document.title = `${product.title} — Cupim`;
+      document.getElementById('bc-name').textContent = product.title;
+      renderProduct();
+    } catch(e) {
+      document.getElementById('product-detail').innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:120px;color:var(--gray)">
+          <i class="ti ti-package-off" style="font-size:48px;display:block;margin-bottom:20px"></i>
+          Produit introuvable. <a href="shop.html" style="color:var(--red)">Retour à la boutique</a>
+        </div>`;
+    }
+  }
+
+  function renderProduct() {
+    const inStock = product.stock > 0;
+    const images = product.images && product.images.length ? product.images : [];
+
+    const sizesHtml = (product.sizes && product.sizes.length)
+      ? `<p class="size-label">Taille / Size</p>
+         <div class="sizes" id="sizes-container">
+           ${product.sizes.map(s => `<button class="size-btn" onclick="selectSize('${s}')">${s}</button>`).join('')}
+         </div>`
+      : '';
+
+    const galleryHtml = `
+      <div class="product-gallery">
+        <div class="main-image" id="main-image">
+          ${images.length
+            ? `<img id="main-img" src="${images[0]}" alt="${product.title}"/>`
+            : `<i class="ti ti-diamond main-image-placeholder"></i>`}
+          ${images.length > 1 ? `
+            <div class="main-image-nav">
+              <button class="nav-arrow" id="prev-btn" onclick="changeImage(-1)" disabled>
+                <i class="ti ti-chevron-left"></i>
+              </button>
+              <button class="nav-arrow" id="next-btn" onclick="changeImage(1)">
+                <i class="ti ti-chevron-right"></i>
+              </button>
+            </div>
+            <div class="image-counter" id="img-counter">1 / ${images.length}</div>
+          ` : ''}
+        </div>
+        ${images.length > 1 ? `
+          <div class="thumbnails" id="thumbnails">
+            ${images.map((img, i) => `
+              <img class="thumb ${i === 0 ? 'active' : ''}" src="${img}" alt="Image ${i+1}" onclick="goToImage(${i})"/>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>`;
+
+    document.getElementById('product-detail').innerHTML = `
+      ${galleryHtml}
+      <div class="product-info">
+        <div class="product-cat">${product.category_name || 'Accessoire'}</div>
+        <h1 class="product-name">${product.title}</h1>
+        <div class="product-price">${formatPrice(product.price)}</div>
+        <p class="product-desc">${product.description}</p>
+        ${sizesHtml}
+        <div class="qty-row">
+          <span class="qty-label">Qté</span>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <span class="qty-val" id="qty-display">1</span>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+          <span class="stock-badge ${inStock ? 'in-stock' : 'out-stock'}">
+            ${inStock ? `En stock (${product.stock})` : 'Épuisé'}
+          </span>
+        </div>
+        ${inStock ? `
+          <button class="add-cart-btn" onclick="addToCart()">
+            <i class="ti ti-shopping-bag" style="margin-right:8px"></i>
+            Ajouter au panier
+          </button>
+          <button class="checkout-now" onclick="buyNow()">Commander maintenant</button>
+        ` : `<button class="add-cart-btn" disabled style="opacity:0.4;cursor:not-allowed">Épuisé / Out of Stock</button>`}
+        <div class="product-meta">
+          ${product.material ? `<div class="meta-row"><span class="meta-key">Matière</span><span>${product.material}</span></div>` : ''}
+          ${product.sku ? `<div class="meta-row"><span class="meta-key">SKU</span><span>${product.sku}</span></div>` : ''}
+          ${product.weight ? `<div class="meta-row"><span class="meta-key">Poids</span><span>${product.weight}g</span></div>` : ''}
+        </div>
+      </div>`;
+  }
+
+  function goToImage(index) {
+    const images = product.images;
+    if (!images || !images.length) return;
+    currentImageIndex = index;
+    document.getElementById('main-img').src = images[index];
+    document.getElementById('img-counter').textContent = `${index + 1} / ${images.length}`;
+    document.getElementById('prev-btn').disabled = index === 0;
+    document.getElementById('next-btn').disabled = index === images.length - 1;
+    document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === index));
+  }
+
+  function changeImage(delta) {
+    const images = product.images;
+    const newIndex = Math.max(0, Math.min(currentImageIndex + delta, images.length - 1));
+    goToImage(newIndex);
+  }
+
+  function selectSize(s) {
+    selectedSize = s;
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('selected', b.textContent === s));
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(1, Math.min(qty + delta, product.stock));
+    document.getElementById('qty-display').textContent = qty;
+  }
+
+  function addToCart() {
+    if (product.sizes && product.sizes.length && !selectedSize) {
+      showToast('Veuillez sélectionner une taille');
+      return;
+    }
+    Cart.add(product, selectedSize || 'unique', qty);
+  }
+
+  function buyNow() {
+    addToCart();
+    setTimeout(() => location.href = 'cart.html', 500);
+  }
+
+  loadProduct();
+</script>
+</body>
+</html>
